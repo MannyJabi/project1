@@ -50,3 +50,30 @@ need to change. I also need to remember that the Driver has to send QUIT, or the
 logger will keep waiting for input.
 
 Next: write the Encrypt program and test it by hand before building the Driver.
+
+
+
+# 10-18-2026 7:57pm
+
+Logger is done and committed, so next is the Encrypt program. It reads commands
+from standard input, one per line. The first word is the command and the rest of
+the line is the argument. It has to handle PASS (set the passkey), ENCRYPT,
+DECRYPT, and QUIT. It prints one line of output for each command, starting with
+RESULT or ERROR. ENCRYPT and DECRYPT should give an error if no passkey has been
+set yet.
+
+For the cipher, I'm using a Vigenere cipher. Each letter of the text is shifted
+by the matching letter of the key (A = 0, B = 1, and so on), and the key repeats
+when the text is longer than the key. To decrypt I shift backwards by the same
+amount. Wrapping around the alphabet needs the mod 26 operation, and I need to
+be careful with negative numbers when decrypting, since Java's % can return a
+negative result. I'll check my work against the assignment's example: HELLO with
+passkey HELLO should give OIWWC. Working it out by hand, H+H = 7+7 = 14 = O,
+E+E = 4+4 = 8 = I, L+L = 11+11 = 22 = W, and the last letter O+O = 14+14 = 28,
+which wraps to 2 = C.
+
+The spec also says the input should only be letters, so I'll return an error for
+anything else. I'll flush the output after every reply, because the Driver will
+be waiting on this program's output through a pipe and a buffered reply would
+make it hang. Since interactive typing didn't work in Git Bash last time, I'll
+test with piped input.
