@@ -33,20 +33,22 @@ I'll try that as well.
 
 # 10-18-2026 7:50pm
 
-Compiled Logger.java and ran it with test.log. I typed START Logging Started.
-and then QUIT, and test.log contained one line:
+Compiled Logger.java with no errors. My first run, java Logger test.log with me
+typing the lines, left test.log empty. I think this is because typing
+interactively in Git Bash didn't reach Java's standard input. Running it with
+piped input worked: printf 'START Logging Started.\nQUIT\n' | java Logger test.log
+produced one line in test.log:
 2026-10-18 19:42 [START] Logging Started.
-That matches the format in the assignment. 
+That matches the format in the assignment. I did not get to test a line with
+only an action and no message, so I'll check that later.
 
-First the cat log didn't appear and i had to re run it because i believe since i was typing interactively in the git back that didnt rach java
+What I learned: the logger only communicates through standard input, so when
+the Driver starts it as a child process, the Driver can write to the logger's
+stdin through a pipe and the code does not need to change. I also need to
+remember that the Driver has to send QUIT, or the logger will keep waiting
+for input.
 
-What I learned: the logger is already a program that only communicates through
-standard input, which means that when the Driver starts it as a child process,
-the Driver can write to the logger's stdin through a pipe and the code does not
-need to change. I also need to remember that the Driver has to send QUIT, or the
-logger will keep waiting for input.
-
-Next: write the Encrypt program and test it by hand before building the Driver.
+Next: write the Encrypt program.
 
 
 
@@ -157,3 +159,21 @@ replies. That's why I flush after every write. On quit the Driver sends QUIT to
 both children, closes the pipes, and waits for both processes to finish.
 
 Next: final checks, then zip the repo and submit.
+
+
+# 10-18-2026 10:26
+
+All three programs work and are pushed to GitHub, so I'm going back to add
+comments before submitting. I'm adding a header comment to each file that says
+what the program does and how it fits with the others, and comments inside the
+code for the parts that are easy to forget: why the Driver flushes after every
+write, how the pipe streams map to the child's stdin and stdout, why the cipher
+uses mod 26 with an extra + 26 so decrypting never goes negative, and why the
+password is never logged or stored in the history.
+
+After pasting in the commented versions I recompiled with javac *.java and
+re-ran the same input file as before. The output was the same (OIWWC, then
+HELLO, the letters-only error, and a clean log with no password), so the
+comments didn't change how the programs behave.
+
+Next: commit and push, then clone fresh, zip with the .git folder, and submit.
